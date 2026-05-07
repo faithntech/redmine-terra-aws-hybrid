@@ -1,0 +1,73 @@
+services:
+
+  db:
+    container_name: mysql_redmine
+    image: mysql:8
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: redmine
+      MYSQL_USER: redmine
+      MYSQL_PASSWORD: secretive
+
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+    networks:
+      - redmine-net
+
+  app:
+    container_name: redmine
+    image: redmine:latest
+    restart: unless-stopped
+
+    depends_on:
+      - db
+
+#    ports:
+#      - "8000:3000"
+
+    environment:
+      REDMINE_DB_MYSQL: db
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: secretive
+
+    volumes:
+      - ./redmine:/usr/src/redmine/files
+#      - ./redmine_embedded_video:/usr/src/redmine/plugins/redmine_embedded_video
+
+    networks:
+      - redmine-net
+
+  web:
+    container_name: nginx_redmine
+    image: nginx:latest
+    restart: unless-stopped
+
+    depends_on:
+      - app
+
+    ports:
+      - "80:80"
+#      - "443:443"
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./cert:/etc/nginx/certs:ro
+
+    networks:
+      - redmine-net
+
+networks:
+  redmine-net:
+    driver: bridge
+
+# only nginx is exposed
+# app stays internal
+# db stays internal
