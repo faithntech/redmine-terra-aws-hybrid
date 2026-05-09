@@ -31,42 +31,146 @@ This project demonstrates a real-world DevOps hybrid system combining:
 ✔ Multi-container architecture
 ✔ Persistent storage (MySQL volume)
 
-## 🚀 Key DevOps Features
 
-### 🐳 Containerization
-- Multi-service Docker Compose setup
-- Separation of app, web proxy, and database layers
+## 🏗️ Architecture
+Local Environment
 
-### ☁️ Cloud Infrastructure (AWS + Terraform)
-- EC2 provisioning
-- Security groups configuration
-- Fully automated cloud setup
+Docker Compose services:
 
-### 🤖 EC2 Boot Automation
-- Docker installed via user_data
-- Docker Compose installed automatically
-- Zero manual server setup required
+app → Redmine application
+web → Nginx reverse proxy
+db → MySQL database
 
-### 🔐 Secure Access
-- SSH key-based authentication (ssh-keygen)
-- No password-based login
+The application is accessed through Nginx instead of directly exposing the Redmine container, following a reverse proxy architecture pattern commonly used in production environments.
 
-### 🌱 Automated Demo Data
-Ruby seed script generates:
-- HR system tickets
-- IT support issues
-- DevOps backlog tasks
+## ☁️ AWS Infrastructure
 
-### 🎯 Why This Project Matters
+Infrastructure is provisioned using Terraform:
 
-This project demonstrates:
+EC2 instance
+Security groups
+SSH key pair access
+Automated EC2 bootstrap using user_data
 
-- Real DevOps engineering workflow
-- Infrastructure automation skills
-- Cloud deployment experience (AWS EC2)
-- Security best practices (reverse proxy + SSH)
-- Production-ready thinking
+The user_data.sh script automatically:
 
-## 📌 YouTube Demo
+installs Docker
+installs Docker Compose
+enables Docker services
+prepares the deployment environment
+🔐 Secure Remote Access
 
-👉 https://www.youtube.com/watch?v=mLsIiDWyQfk
+SSH key-based authentication is configured locally using:
+
+```ssh-keygen -f .ssh/redminekey```
+
+This allows secure remote access to the EC2 instance without password authentication.
+
+🌐 Reverse Proxy Setup (Nginx)
+
+Nginx acts as a reverse proxy between public traffic and the Redmine application.
+
+Request flow:
+
+```User → Nginx → Redmine App → MySQL```
+
+Instead of exposing the application directly to the internet, Nginx forwards traffic internally using Docker networking:
+
+```http://app:3000```
+
+Here:
+
+- app is the Docker Compose service name
+- 3000 is the internal Redmine application port
+
+This architecture improves:
+
+- security
+- traffic control
+- scalability
+- environment abstraction
+  
+## 🌱 Automated Demo Data
+
+A Ruby on Rails seed script is used to automatically generate realistic demo data after deployment.
+
+Generated datasets include:
+
+### 👥 HR System
+
+onboarding workflows
+payroll issues
+leave requests
+
+🖥️ IT Helpdesk
+
+VPN issues
+email downtime
+support tickets
+
+🚀 DevOps Backlog
+
+CI/CD improvements
+Terraform infrastructure tasks
+monitoring setup
+
+⚙️ Tech Stack
+
+Docker
+Docker Compose
+Terraform
+AWS EC2
+Amazon Linux 2
+Nginx
+MySQL 8
+Redmine (Ruby on Rails)
+Bash scripting
+SSH
+
+## 🚀 Deployment Workflow
+
+1. Generate SSH Key Pair
+   
+```ssh-keygen -t rsa -b 4096```
+
+3. Provision AWS Infrastructure
+
+```cd terraform```
+```terraform init```
+```terraform apply```
+
+4. EC2 Auto Configuration
+
+The EC2 instance automatically installs:
+
+Docker
+Docker Compose
+
+using the user_data.sh script.
+
+4. Deploy Application
+   
+```docker compose up -d```
+
+6. Generate Demo Data
+   
+```bash redmine/docker/seed.sh```
+
+🎥 Demo Video
+
+📺 YouTube Demo:
+
+https://www.youtube.com/watch?v=mLsIiDWyQfk
+
+##💡 Key DevOps Concepts Demonstrated
+
+Infrastructure as Code (IaC)
+Hybrid architecture
+Container orchestration
+Reverse proxy architecture
+Cloud provisioning
+Automated server bootstrap
+Persistent storage management
+Secure SSH-based access
+
+Environment reproducibility
