@@ -63,6 +63,7 @@ prepares the deployment environment
 SSH key-based authentication is configured locally using:
 
 ```ssh-keygen -f .ssh/redminekey```
+Note: always check your path.
 
 This allows secure remote access to the EC2 instance without password authentication.
 
@@ -132,7 +133,7 @@ SSH
 1. Generate SSH Key Pair
    
 ```bash
-ssh-keygen -t rsa -b 4096
+ssh-keygen -f .ssh/redminekey
 ```
 
 3. Provision AWS Infrastructure
