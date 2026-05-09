@@ -131,13 +131,17 @@ SSH
 
 1. Generate SSH Key Pair
    
-```ssh-keygen -t rsa -b 4096```
+```bash
+ssh-keygen -t rsa -b 4096
+```
 
 3. Provision AWS Infrastructure
 
-```cd terraform```
-```terraform init```
-```terraform apply```
+```bash
+cd terraform
+terraform init
+terraform apply
+```
 
 4. EC2 Auto Configuration
 
@@ -150,11 +154,15 @@ using the user_data.sh script.
 
 4. Deploy Application
    
-```docker compose up -d```
+```bash
+docker compose up -d
+```
 
 6. Generate Demo Data
    
-```bash redmine/docker/seed.sh```
+```bash
+bash redmine/docker/seed.sh
+```
 
 🎥 Demo Video
 
